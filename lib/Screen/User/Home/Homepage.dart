@@ -110,7 +110,7 @@ class _UserHomePageState extends State<UserHomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                                 Text('Welcome back, 👋'),
-                              Text(network.username.toString(), style: TextStyle(fontWeight: FontWeight.bold),)
+                              Text('${network.firstname.toString()} ${network.lastname.toString()}', style: TextStyle(fontWeight: FontWeight.bold),)
                             ],
                           ),
                           Spacer(),

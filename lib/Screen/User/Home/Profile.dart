@@ -213,7 +213,7 @@ class ProfilePageState extends State<ProfilePage> {
                             );
                           },
                           title: Text('Name',  style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white)),
-                          subtitle: Text(network.username,
+                          subtitle: Text(network.firstname,
                             style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 16),),
                         ),
                         ListTile(

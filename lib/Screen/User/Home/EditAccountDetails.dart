@@ -99,7 +99,7 @@ class _EditUserRegsiterState extends State<EditUserRegsiter> {
                     network.editname = value;
 
                   },
-                  initialValue: network.username,
+                  initialValue: network.firstname,
                   cursorColor: Color(0xC2141414),
                   decoration: InputDecoration(
                     isCollapsed: true,
@@ -295,7 +295,7 @@ class _EditUserRegsiterState extends State<EditUserRegsiter> {
                     network.editUser(
                       context: context,
                       phonenumber: network.editphone,
-                      fullname: network.editname,
+                      firstname: network.editname,
                     );
                   }
                 },

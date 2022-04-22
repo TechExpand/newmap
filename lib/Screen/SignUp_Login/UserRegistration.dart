@@ -92,23 +92,62 @@ class _UserRegsiterState extends State<UserRegsiter> {
                       padding: const EdgeInsets.only(left:20.0, bottom: 10),
                       child: Align(
                           alignment: Alignment.bottomLeft,
-                          child: Text('Name', style: TextStyle(color: Color(0xFF141414).withOpacity(0.35),),)),
+                          child: Text('First Name', style: TextStyle(color: Color(0xFF141414).withOpacity(0.35),),)),
                     ),
-                    Container(
+                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 20,),
                       child: TextFormField(
                         onChanged: (value){
-                          provide.name = value;
+                          provide.firstname = value;
                         },
                         validator: (value){
                           if(value!.isEmpty){
-                            return 'name cannot be empty';
+                            return 'First Name cannot be empty';
                           }
                         },
                         cursorColor: Color(0xC2141414),
                          decoration: InputDecoration(
                            isCollapsed: true,
-                           hintText: "Name",
+                           hintText: "First Name",
+                           hintStyle: TextStyle(color: Color(0xC2141414)),
+                           focusColor: Color(0xC2141414),
+                           border: UnderlineInputBorder(
+                             borderSide: const BorderSide(color: Color(0x59141414), width: 2.0),
+
+                           ),
+                           focusedErrorBorder: UnderlineInputBorder(
+                             borderSide: const BorderSide(color: Color(0x59141414), width: 2.0),
+                           ),
+                           focusedBorder:UnderlineInputBorder(
+                             borderSide: const BorderSide(color: Color(0x59141414), width: 2.0),
+                           ),
+                      ),
+                      )),
+ SizedBox(
+                      height: 20,
+                    ),
+
+                      Padding(
+                      padding: const EdgeInsets.only(left:20.0, bottom: 10),
+                      child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text('Last Name', style: TextStyle(color: Color(0xFF141414).withOpacity(0.35),),)),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20,),
+                      child: TextFormField(
+                        onChanged: (value){
+                          provide.lastname = value;
+                        },
+                        validator: (value){
+                          if(value!.isEmpty){
+                            return 'Last Name cannot be empty';
+                          }
+                        },
+                        cursorColor: Color(0xC2141414),
+                         decoration: InputDecoration(
+                           isCollapsed: true,
+                           hintText: "Last Name",
                            hintStyle: TextStyle(color: Color(0xC2141414)),
                            focusColor: Color(0xC2141414),
                            border: UnderlineInputBorder(
@@ -323,7 +362,8 @@ class _UserRegsiterState extends State<UserRegsiter> {
                               circularCustom(context);
                               network.registerUser(
                                 context: context,
-                                fullname: provide.name,
+                                firstname: provide.firstname,
+                                lastname: provide.lastname,
                                 email: provide.email,
                                 lga: postRequestProvider.selectedLga!.id.toString(),
                                 latitude: location.location_latitude.toStringAsFixed(2),

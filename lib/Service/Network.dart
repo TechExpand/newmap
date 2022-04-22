@@ -21,7 +21,8 @@ import 'package:newmap/Widget/CustomCircular.dart';
 import 'package:provider/provider.dart';
 
 class WebServices extends ChangeNotifier {
-  String username = "";
+  String firstname = "";
+  String lastname = "";
   String myemail = "";
   String myphonenumber = "";
   String wallet = "";
@@ -37,27 +38,22 @@ class WebServices extends ChangeNotifier {
   final box = GetStorage();
   var path = '';
 
-
-
-  setPath(value){
+  setPath(value) {
     path = value;
     notifyListeners();
   }
 
-  setUserType(value){
+  setUserType(value) {
     userType = value;
     notifyListeners();
   }
 
-
-  setToken(value){
+  setToken(value) {
     token = value;
     notifyListeners();
   }
 
-
-
-  Future<dynamic> sendTransaction(category, weight, userId, context)async{
+  Future<dynamic> sendTransaction(category, weight, userId, context) async {
     try {
       var response = await http.post(
           Uri.parse(
@@ -69,7 +65,7 @@ class WebServices extends ChangeNotifier {
           }),
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-             'Authorization': 'Token $token',
+            'Authorization': 'Token $token',
           });
 
       var body = jsonDecode(response.body);
@@ -79,13 +75,13 @@ class WebServices extends ChangeNotifier {
           response.statusCode == 202) {
         print('gooodddd');
         Navigator.pop(context);
-       sendDialog(context, agent: 'agent');
+        sendDialog(context, agent: 'agent');
       } else {
         print(body);
         Navigator.pop(context);
         await showTextToast(
-            text: 'unable to create transaction.',
-            context: context,
+          text: 'unable to create transaction.',
+          context: context,
         );
       }
     } catch (e) {
@@ -98,15 +94,12 @@ class WebServices extends ChangeNotifier {
     }
   }
 
-
-
-
-  Future<dynamic> giftPoint(agent,userid, amount, context)async{
+  Future<dynamic> giftPoint(agent, userid, amount, context) async {
     try {
       var response = await http.post(
-          Uri.parse(
-              agent=='agent'?"https://frankediku.pythonanywhere.com/vendorsapi/transfervendorpoints/":
-              'https://frankediku.pythonanywhere.com/vendorsapi/transferpoints/'),
+          Uri.parse(agent == 'agent'
+              ? "https://frankediku.pythonanywhere.com/vendorsapi/transfervendorpoints/"
+              : 'https://frankediku.pythonanywhere.com/vendorsapi/transferpoints/'),
           body: jsonEncode(<String, String>{
             'userid': userid.toString(),
             'amount': amount.toString(),
@@ -115,13 +108,13 @@ class WebServices extends ChangeNotifier {
             'Content-Type': 'application/json; charset=UTF-8',
             'Authorization': 'Token $token',
           });
-print(response.body);
       print(response.body);
-     // var body = jsonDecode(response.body);
+      print(response.body);
+      // var body = jsonDecode(response.body);
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 202) {
-        sendDialog(context, agent:agent);
+        sendDialog(context, agent: agent);
       } else {
         var body = jsonDecode(response.body);
         Navigator.pop(context);
@@ -139,41 +132,37 @@ print(response.body);
     }
   }
 
-
-
-  Future<dynamic> getAccountName(bankCode, accountNumber, context)async{
+  Future<dynamic> getAccountName(bankCode, accountNumber, context) async {
     try {
-      var response = await http.post(
-          Uri.parse(
-              'https://api.flutterwave.com/v3/accounts/resolve'),
-          body: jsonEncode(<String, String>{
-            'account_number': accountNumber.toString(),
-            'account_bank': bankCode.toString(),
-          }),
-          headers: {
+      var response = await http
+          .post(Uri.parse('https://api.flutterwave.com/v3/accounts/resolve'),
+              body: jsonEncode(<String, String>{
+                'account_number': accountNumber.toString(),
+                'account_bank': bankCode.toString(),
+              }),
+              headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer FLWSECK-71230ccbd14863ff68afb87741acdbec-X',
-
+            'Authorization':
+                'Bearer FLWSECK-71230ccbd14863ff68afb87741acdbec-X',
           });
       print(response.body);
       var body = jsonDecode(response.body);
       if (response.statusCode >= 200) {
-        if(body['status'] == 'success'){
+        if (body['status'] == 'success') {
           Navigator.pop(context);
-           showTextToast(
+          showTextToast(
             text: body['message'].toString(),
             context: context,
           );
-          return  body['data']['account_name'];
-        }else{
+          return body['data']['account_name'];
+        } else {
           Navigator.pop(context);
-           showTextToast(
+          showTextToast(
             text: body['message'].toString(),
             context: context,
           );
           return 'error';
         }
-
       } else {
         var body = jsonDecode(response.body);
         Navigator.pop(context);
@@ -181,7 +170,6 @@ print(response.body);
           text: body['message'].toString(),
           context: context,
         );
-
       }
     } catch (e) {
       Navigator.pop(context);
@@ -192,23 +180,23 @@ print(response.body);
     }
   }
 
-
-
-
-  Future<dynamic> registerUser({context,
-    fullname,
-    email,
-    phonenumber,
-    password,
-    latitude,
-    lga,
-    longitude}) async {
+  Future<dynamic> registerUser(
+      {context,
+      firstname,
+      lastname,
+      email,
+      phonenumber,
+      password,
+      latitude,
+      lga,
+      longitude}) async {
     try {
       var response = await http.post(
           Uri.parse(
               'https://frankediku.pythonanywhere.com/accountapi/createuser/'),
           body: jsonEncode(<String, String>{
-            'fullname': fullname.toString(),
+            'firstname': firstname.toString(),
+            "lastname": lastname.toString(),
             'email': email.toString(),
             'phonenumber': phonenumber.toString(),
             'local_govt': lga,
@@ -220,7 +208,6 @@ print(response.body);
             'Content-Type': 'application/json; charset=UTF-8',
             //  'Authorization': 'Bearer $bearer',
           });
-
 
       print(response.statusCode);
       print(response.statusCode);
@@ -248,24 +235,22 @@ print(response.body);
             },
           ),
         );
-      }else{
-       Map message = body['message'];
-        if (message['non_field_errors'].toString() ==
-            '[Email Already Exist]') {
+      } else {
+        Map message = body['message'];
+        if (message['non_field_errors'].toString() == '[Email Already Exist]') {
           Navigator.pop(context);
           await showTextToast(
             text: 'Email Already Exist.',
             context: context,
           );
-        }else if (message['phonenumber'].toString() ==
-            '[Ensure this field has no more than 15 characters.]'){
+        } else if (message['phonenumber'].toString() ==
+            '[Ensure this field has no more than 15 characters.]') {
           Navigator.pop(context);
           await showTextToast(
             text: 'Ensure this field has no more than 15 characters.',
             context: context,
           );
-        }
-        else {
+        } else {
           Navigator.pop(context);
           await showTextToast(
             text: 'A Problem was Encountered.',
@@ -273,24 +258,23 @@ print(response.body);
           );
         }
       }
-
-
     } catch (e) {
       Navigator.pop(context);
       print(e);
     }
   }
 
-  Future<dynamic> registerAgent({context,
-    fullname,
-    email,
-    phonenumber,
-    password,
-    latitude,
-    lga,
-    address,
-    longitude,
-    uniqueID}) async {
+  Future<dynamic> registerAgent(
+      {context,
+      fullname,
+      email,
+      phonenumber,
+      password,
+      latitude,
+      lga,
+      address,
+      longitude,
+      uniqueID}) async {
     try {
       var response = await http.post(
           Uri.parse(
@@ -325,7 +309,7 @@ print(response.body);
           context,
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) {
-            //  setUserType('agent');
+              //  setUserType('agent');
               return SignInUserAgent(
                 status: 'agent',
               );
@@ -364,58 +348,52 @@ print(response.body);
     }
   }
 
+  Future<dynamic> uploadImage({context, imagePath}) async {
+    var upload = http.MultipartRequest(
+        'PATCH',
+        Uri.parse(
+            'https://frankediku.pythonanywhere.com/accountapi/edituser/'));
+    var file = await http.MultipartFile.fromPath('image', imagePath);
+    upload.files.add(file);
+    upload.headers['authorization'] = 'Token $token';
 
+    final stream = await upload.send();
+    var resp = await http.Response.fromStream(stream);
+    // var body = jsonDecode(resp.body);
+    // print(body.toString());
 
+    // if (resp.statusCode == 200 ||
+    //     resp.statusCode == 201 ||
+    //     resp.statusCode == 202) {
+    //   await showTextToast(
+    //     text: 'changed successfully.',
+    //     context: context,
+    //   );
+    // } else {
+    //   print('lalallala');
+    //
+    //   await showTextToast(
+    //     text: 'Failed to edit.',
+    //     context: context,
+    //   );
+    // }
+    image = imagePath;
+    path = 'path';
+    notifyListeners();
+    showTextToast(
+      text: 'changed successfully.',
+      context: context,
+    );
+  }
 
-  Future<dynamic> uploadImage({context,imagePath}) async {
-
-      var upload = http.MultipartRequest(
-          'PATCH', Uri.parse('https://frankediku.pythonanywhere.com/accountapi/edituser/'));
-      var file = await http.MultipartFile.fromPath('image', imagePath);
-      upload.files.add(file);
-      upload.headers['authorization'] = 'Token $token';
-
-      final stream = await upload.send();
-      var resp = await http.Response.fromStream(stream);
-      // var body = jsonDecode(resp.body);
-      // print(body.toString());
-
-      // if (resp.statusCode == 200 ||
-      //     resp.statusCode == 201 ||
-      //     resp.statusCode == 202) {
-      //   await showTextToast(
-      //     text: 'changed successfully.',
-      //     context: context,
-      //   );
-      // } else {
-      //   print('lalallala');
-      //
-      //   await showTextToast(
-      //     text: 'Failed to edit.',
-      //     context: context,
-      //   );
-      // }
-      image = imagePath;
-      path = 'path';
-      notifyListeners();
-      showTextToast(
-        text: 'changed successfully.',
-        context: context,
-      );
-    }
-
-
-
-
-
-  Future<dynamic> editUser({context, phonenumber, fullname}) async {
+  Future<dynamic> editUser({context, phonenumber, firstname}) async {
     try {
       var response = await http.patch(
           Uri.parse(
               'https://frankediku.pythonanywhere.com/accountapi/edituser/'),
           body: jsonEncode(<String, String>{
             'phonenumber': phonenumber.toString(),
-            'fullname': fullname.toString(),
+            'firstname': firstname.toString(),
           }),
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -427,7 +405,8 @@ print(response.body);
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 202) {
-        username = body['message']['fullname'];
+        firstname = body['message']['firstname'];
+        lastname = body['message']['lastname'];
         myphonenumber = body['message']['phonenumber'];
 
         Navigator.pop(context);
@@ -447,38 +426,28 @@ print(response.body);
     }
   }
 
-
   Future<dynamic> updateLocation({lan, log}) async {
-      var response = await http.post(
-          Uri.parse(
-              'https://frankediku.pythonanywhere.com/vendorsapi/updatevendorlocation/'),
-          body: jsonEncode(<String, String>{
-            'longitude': log.toString(),
-            'latitude': lan.toString(),
-          }),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Token $token',
-          });
+    var response = await http.post(
+        Uri.parse(
+            'https://frankediku.pythonanywhere.com/vendorsapi/updatevendorlocation/'),
+        body: jsonEncode(<String, String>{
+          'longitude': log.toString(),
+          'latitude': lan.toString(),
+        }),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Token $token',
+        });
 
+    // var body = jsonDecode(response.body);
 
-
-     // var body = jsonDecode(response.body);
-
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 202) {
-     print('goooood');
-      } else {
-
-      }
-      notifyListeners();
-
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      print('goooood');
+    } else {}
+    notifyListeners();
   }
-
-
-
-
 
   Future<dynamic> LoginAgent({context, email, password}) async {
     try {
@@ -498,7 +467,8 @@ print(response.body);
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 202) {
-        username = body['fullname'];
+        firstname = body['firstname'];
+        lastname = body['lastname'];
         myemail = body['email'];
         myphonenumber = body['phonenumber'];
         wallet = body['wallet'];
@@ -532,15 +502,14 @@ print(response.body);
           text: 'Invalid Login Details.',
           context: context,
         );
-      } else if(body['message'].containsKey('non_field_errors')){
+      } else if (body['message'].containsKey('non_field_errors')) {
         print(body);
         Navigator.pop(context);
         await showTextToast(
           text: body['message']['non_field_errors'][0].toString(),
           context: context,
         );
-      }
-        else {
+      } else {
         print(body);
         Navigator.pop(context);
         await showTextToast(
@@ -550,10 +519,10 @@ print(response.body);
       }
       notifyListeners();
     } catch (e) {
-      print('jaaa');
+      print('jaaa $e');
       Navigator.pop(context);
       await showTextToast(
-        text:  'Invalid Login Details.',
+        text: 'Invalid Login Details.',
         context: context,
       );
     }
@@ -577,7 +546,8 @@ print(response.body);
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 202) {
-        username = body['fullname'];
+        firstname = body['firstname'];
+        lastname = body['lastname'];
         myemail = body['email'];
         myphonenumber = body['phonenumber'];
         wallet = body['wallet'];
@@ -608,7 +578,7 @@ print(response.body);
         print('mamamama');
         Navigator.pop(context);
         await showTextToast(
-          text: 'Invalid Login Details.',
+          text: 'Invalid Login Details.${body['message']}',
           context: context,
         );
       } else {
@@ -621,15 +591,14 @@ print(response.body);
       }
       notifyListeners();
     } catch (e) {
-      print('jaaa');
+      print(e);
       Navigator.pop(context);
       await showTextToast(
-        text:  'Invalid Login Details.',
+        text: 'Unable to proceed',
         context: context,
       );
     }
   }
-
 
   Future<dynamic> deleteAccount(context, id) async {
     try {
@@ -649,7 +618,7 @@ print(response.body);
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 202) {
-         showTextToast(
+        showTextToast(
           text: 'Account Deleted.',
           context: context,
         );
@@ -672,7 +641,6 @@ print(response.body);
     }
   }
 
-
   Future<dynamic> AddBank({context, accname, accnum, acccode, bankname}) async {
     try {
       var response = await http.post(
@@ -683,7 +651,6 @@ print(response.body);
             'accountnumber': accnum.toString(),
             'accountname': accname.toString(),
             'code': acccode.toString(),
-
           }),
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -695,11 +662,11 @@ print(response.body);
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 202) {
-      return 'true';
+        return 'true';
       } else {
         Navigator.pop(context);
         print('lalallala');
-         showTextToast(
+        showTextToast(
           text: 'A Problem was Encountered.',
           context: context,
         );
@@ -712,15 +679,11 @@ print(response.body);
     }
   }
 
-
-
-
-
-  Future withdrawBank(agent,id, amount, context) async {
+  Future withdrawBank(agent, id, amount, context) async {
     var response = await http.post(
-        Uri.parse(
-            agent=='agent'?"https://frankediku.pythonanywhere.com/vendorsapi/withdraw/":
-            "https://frankediku.pythonanywhere.com/accountapi/withdraw/"),
+        Uri.parse(agent == 'agent'
+            ? "https://frankediku.pythonanywhere.com/vendorsapi/withdraw/"
+            : "https://frankediku.pythonanywhere.com/accountapi/withdraw/"),
         body: jsonEncode(<String, String>{
           'bankid': id.toString(),
           'amount': amount.toString(),
@@ -733,7 +696,7 @@ print(response.body);
     print(response.body.toString());
     print(response.body.toString());
     print(response.statusCode.toString());
-   var body = json.decode(response.body);
+    var body = json.decode(response.body);
     notifyListeners();
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
@@ -741,20 +704,20 @@ print(response.body);
       print('goooddddd');
       Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) {
-                return agent=='agent'?AgentTab():HomePageTab();
-              },
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            ),
-                (route) => false,
-          );
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return agent == 'agent' ? AgentTab() : HomePageTab();
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+        (route) => false,
+      );
 
       await showTextToast(
         text: 'Your Account have been credited Successfully',
@@ -772,15 +735,12 @@ print(response.body);
     }
   }
 
-
-
-
-
-
-  Future withdrawAirtime(agent,networkID, amount, category, getTranref, mobileNumber, context) async {
+  Future withdrawAirtime(agent, networkID, amount, category, getTranref,
+      mobileNumber, context) async {
     var response = await http.post(
-        Uri.parse(
-            agent=='agent'?"https://frankediku.pythonanywhere.com/vendorsapi/purchasevendorairtime/":"https://frankediku.pythonanywhere.com/vendorsapi/purchaseairtime/"),
+        Uri.parse(agent == 'agent'
+            ? "https://frankediku.pythonanywhere.com/vendorsapi/purchasevendorairtime/"
+            : "https://frankediku.pythonanywhere.com/vendorsapi/purchaseairtime/"),
         body: jsonEncode(<String, String>{
           'amount': amount.toString(),
           'network': category.toString(),
@@ -805,7 +765,7 @@ print(response.body);
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) {
-            return agent=='agent'?AgentTab():HomePageTab();
+            return agent == 'agent' ? AgentTab() : HomePageTab();
           },
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
@@ -814,7 +774,7 @@ print(response.body);
             );
           },
         ),
-            (route) => false,
+        (route) => false,
       );
 
       await showTextToast(
@@ -843,27 +803,25 @@ print(response.body);
           'Authorization': 'Token $token',
         });
     var body = json.decode(response.body);
-print(body);
+    print(body);
     print(body);
 
-notifyListeners();
+    notifyListeners();
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-     return body;
+      return body;
     } else {
       print('failed');
       return 'Not found';
     }
   }
 
-
-  Future getUserInfo()async{
+  Future getUserInfo() async {
     //https://frankediku.pythonanywhere.com/accountapi/getuser/
     // 'https://frankediku.pythonanywhere.com/vendorsapi/getuser/'
     var response = await http.get(
-        Uri.parse(
-            'https://frankediku.pythonanywhere.com/accountapi/getuser/'),
+        Uri.parse('https://frankediku.pythonanywhere.com/accountapi/getuser/'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Token $token',
@@ -880,310 +838,266 @@ notifyListeners();
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      username = body['fullname'];
+      firstname = body['firstname'];
+      lastname = body['lastname'];
       myemail = body['email'];
       myphonenumber = body['phonenumber'];
       wallet = body['wallet'];
       points = body['weight'];
       walletpoints = body['walletpoints'];
       id = body['id'];
-      localID =  body['local_gov_code'];
-      image = body['image']==null?'':body['image'];
+      localID = body['local_gov_code'];
+      image = body['image'] == null ? '' : body['image'];
       return body;
     } else {
       print('failed');
     }
-
-
   }
 
-  Future getVendorInfo()async{
+  Future getVendorInfo() async {
     //https://frankediku.pythonanywhere.com/accountapi/getuser/
-   // 'https://frankediku.pythonanywhere.com/vendorsapi/getuser/'
+    // 'https://frankediku.pythonanywhere.com/vendorsapi/getuser/'
+    var response = await http.get(
+        Uri.parse('https://frankediku.pythonanywhere.com/vendorsapi/getuser/'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Token $token',
+        }).timeout(Duration(seconds: 20));
+    print(response.body);
+    print(response.body);
+    var body = json.decode(response.body);
+    // List body1 = body;
+    // List<Transaction> UsertransLists = body1.map((data) {
+    //   return Transaction.fromJson(data);
+    // }).toList();
+    print(body);
+    notifyListeners();
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      firstname = body['firstname'];
+      lastname = body['lastname'];
+      myemail = body['email'];
+      myphonenumber = body['phonenumber'];
+      wallet = body['wallet'];
+      points = body['weight'];
+      walletpoints = body['walletpoints'];
+      id = body['id'];
+      localID = body['local_gov_code'];
+      image = body['image'] == null ? '' : body['image'];
+      return body;
+    } else {
+      print('failed');
+    }
+  }
+
+  Future getUserTransaction() async {
+    try {
       var response = await http.get(
           Uri.parse(
-              'https://frankediku.pythonanywhere.com/vendorsapi/getuser/'),
+              'https://frankediku.pythonanywhere.com/accountapi/transactionhistory/'),
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
             'Authorization': 'Token $token',
           }).timeout(Duration(seconds: 20));
-      print(response.body);
-      print(response.body);
       var body = json.decode(response.body);
-      // List body1 = body;
-      // List<Transaction> UsertransLists = body1.map((data) {
-      //   return Transaction.fromJson(data);
-      // }).toList();
-      print(body);
-      notifyListeners();
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 202) {
-        username = body['fullname'];
-        myemail = body['email'];
-        myphonenumber = body['phonenumber'];
-        wallet = body['wallet'];
-        points = body['weight'];
-        walletpoints = body['walletpoints'];
-        id = body['id'];
-        localID =  body['local_gov_code'];
-        image = body['image']==null?'':body['image'];
-       return body;
-      } else {
-        print('failed');
-      }
-
-
-  }
-
-  Future getUserTransaction() async {
-    try{
-    var response = await http.get(
-        Uri.parse(
-            'https://frankediku.pythonanywhere.com/accountapi/transactionhistory/'),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Token $token',
-        }).timeout(Duration(seconds: 20));
-    var body = json.decode(response.body);
-    List body1 = body;
-    List<Transaction> UsertransLists = body1.map((data) {
-      return Transaction.fromJson(data);
-    }).toList();
-
-    notifyListeners();
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 202) {
-      if (UsertransLists.isEmpty) {
-        List<Transaction> defaul = [];
-        return defaul;
-      } else {
-        print(UsertransLists);
-        return UsertransLists;
-      }
-    } else {
-      print('failed');
-    }
-  }on TimeoutException catch (e) {
-      List<Transaction> defaul = [
-        Transaction(amount: 'network')
-      ];
-      return defaul;
-    } on SocketException catch (e) {
-      List<Transaction> defaul = [
-        Transaction(amount: 'network')
-      ];
-      print('Socket Error: $e');
-      return defaul;
-    } on Error catch (e) {
-      List<Transaction> defaul = [
-        Transaction(amount: 'network')
-      ];
-      print('General Error: $e');
-      return defaul;
-    }
-
-  }
-
-
-
-  Future getVendorTransaction() async {
-    try{
-    var response = await http.get(
-        Uri.parse(
-            'https://frankediku.pythonanywhere.com/vendorsapi/transactionhistory/'),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Token $token',
-        }).timeout(Duration(seconds: 20));
-    var body = json.decode(response.body);
-    List body1 = body;
-    List<Transaction> UsertransLists = body1.map((data) {
-      return Transaction.fromJson(data);
-    }).toList();
-
-    notifyListeners();
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 202) {
-      if (UsertransLists.isEmpty) {
-        List<Transaction> defaul = [];
-        return defaul;
-      } else {
-        print(UsertransLists);
-        return UsertransLists;
-      }
-    } else {
-      print('failed');
-    }
-  }on TimeoutException catch (e) {
-      List<Transaction> defaul = [
-        Transaction(amount: 'network')
-      ];
-      return defaul;
-    } on SocketException catch (e) {
-      List<Transaction> defaul = [
-        Transaction(amount: 'network')
-      ];
-      print('Socket Error: $e');
-      return defaul;
-    } on Error catch (e) {
-      List<Transaction> defaul = [
-        Transaction(amount: 'network')
-      ];
-      print('General Error: $e');
-      return defaul;
-    }
-  }
-
-
-  Future getAccountDetails() async {
-    try{
-    var response = await http.get(
-        Uri.parse(
-            'https://frankediku.pythonanywhere.com/accountapi/usersbanks/'),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Token $token',
-        }).timeout(Duration(seconds: 20));
-    var body = json.decode(response.body);
-    List body1 = body;
-    List<BankInfoUser> UserAccLists = body1.map((data) {
-      return BankInfoUser.fromJson(data);
-    }).toList();
-
-    notifyListeners();
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 202) {
-      if (UserAccLists.isEmpty) {
-        List<BankInfoUser> defaul = [];
-        return defaul;
-      } else {
-        print(UserAccLists);
-        return UserAccLists;
-      }
-    } else {
-      print('failed');
-    }
-  }on TimeoutException catch (e) {
-      List<BankInfoUser> defaul = [
-        BankInfoUser(accountname: 'network')
-      ];
-      return defaul;
-    } on SocketException catch (e) {
-      List<BankInfoUser> defaul = [
-        BankInfoUser(accountname: 'network')
-      ];
-      print('Socket Error: $e');
-      return defaul;
-    } on Error catch (e) {
-      List<BankInfoUser> defaul = [
-        BankInfoUser(accountname: 'network')
-      ];
-      print('General Error: $e');
-      return defaul;
-    }
-
-  }
-
-
-
-
-
-
-
-  Future getLGA(context) async {
-      var response = await http.get(
-          Uri.parse(
-              'https://frankediku.pythonanywhere.com/accountapi/getlocalgovt/'),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-          });
-      var body = json.decode(response.body);
-      List body1 = body['localgovt'];
-      List<LGA> lga = body1.map((data) {
-        return LGA.fromJson(data);
+      List body1 = body;
+      List<Transaction> UsertransLists = body1.map((data) {
+        return Transaction.fromJson(data);
       }).toList();
 
       notifyListeners();
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 202) {
-        BankProvider postRequestProvider = Provider.of<BankProvider>(context, listen: false);
-        postRequestProvider.allLga = lga;
-        if (lga.isEmpty) {
-          List<LGA> defaul = [];
+        if (UsertransLists.isEmpty) {
+          List<Transaction> defaul = [];
           return defaul;
         } else {
-          return lga;
+          print(UsertransLists);
+          return UsertransLists;
         }
       } else {
-        print(body);
+        print('failed');
       }
-
+    } on TimeoutException catch (e) {
+      List<Transaction> defaul = [Transaction(amount: 'network')];
+      return defaul;
+    } on SocketException catch (e) {
+      List<Transaction> defaul = [Transaction(amount: 'network')];
+      print('Socket Error: $e');
+      return defaul;
+    } on Error catch (e) {
+      List<Transaction> defaul = [Transaction(amount: 'network')];
+      print('General Error: $e');
+      return defaul;
+    }
   }
 
+  Future getVendorTransaction() async {
+    try {
+      var response = await http.get(
+          Uri.parse(
+              'https://frankediku.pythonanywhere.com/vendorsapi/transactionhistory/'),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Token $token',
+          }).timeout(Duration(seconds: 20));
+      var body = json.decode(response.body);
+      List body1 = body;
+      List<Transaction> UsertransLists = body1.map((data) {
+        return Transaction.fromJson(data);
+      }).toList();
 
+      notifyListeners();
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 202) {
+        if (UsertransLists.isEmpty) {
+          List<Transaction> defaul = [];
+          return defaul;
+        } else {
+          print(UsertransLists);
+          return UsertransLists;
+        }
+      } else {
+        print('failed');
+      }
+    } on TimeoutException catch (e) {
+      List<Transaction> defaul = [Transaction(amount: 'network')];
+      return defaul;
+    } on SocketException catch (e) {
+      List<Transaction> defaul = [Transaction(amount: 'network')];
+      print('Socket Error: $e');
+      return defaul;
+    } on Error catch (e) {
+      List<Transaction> defaul = [Transaction(amount: 'network')];
+      print('General Error: $e');
+      return defaul;
+    }
+  }
 
+  Future getAccountDetails() async {
+    try {
+      var response = await http.get(
+          Uri.parse(
+              'https://frankediku.pythonanywhere.com/accountapi/usersbanks/'),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Token $token',
+          }).timeout(Duration(seconds: 20));
+      var body = json.decode(response.body);
+      List body1 = body;
+      List<BankInfoUser> UserAccLists = body1.map((data) {
+        return BankInfoUser.fromJson(data);
+      }).toList();
 
+      notifyListeners();
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 202) {
+        if (UserAccLists.isEmpty) {
+          List<BankInfoUser> defaul = [];
+          return defaul;
+        } else {
+          print(UserAccLists);
+          return UserAccLists;
+        }
+      } else {
+        print('failed');
+      }
+    } on TimeoutException catch (e) {
+      List<BankInfoUser> defaul = [BankInfoUser(accountname: 'network')];
+      return defaul;
+    } on SocketException catch (e) {
+      List<BankInfoUser> defaul = [BankInfoUser(accountname: 'network')];
+      print('Socket Error: $e');
+      return defaul;
+    } on Error catch (e) {
+      List<BankInfoUser> defaul = [BankInfoUser(accountname: 'network')];
+      print('General Error: $e');
+      return defaul;
+    }
+  }
 
-
-
-  Future getAgents(lan,log) async {
-try{
+  Future getLGA(context) async {
     var response = await http.get(
         Uri.parse(
-            'https://frankediku.pythonanywhere.com/vendorsapi/getvendordistance/$lan/$log/'),
+            'https://frankediku.pythonanywhere.com/accountapi/getlocalgovt/'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Token $token',
-        }).timeout(Duration(seconds: 20));
+        });
     var body = json.decode(response.body);
-    print(body);
-    print(body);
-    List body1 = body['message'];
-    List<Agents> AgentLists = body1.map((data) {
-      return Agents.fromJson(data);
+    List body1 = body['localgovt'];
+    List<LGA> lga = body1.map((data) {
+      return LGA.fromJson(data);
     }).toList();
 
     notifyListeners();
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      if (AgentLists.isEmpty) {
-        List<Agents> defaul = [];
+      BankProvider postRequestProvider =
+          Provider.of<BankProvider>(context, listen: false);
+      postRequestProvider.allLga = lga;
+      if (lga.isEmpty) {
+        List<LGA> defaul = [];
         return defaul;
       } else {
-        print(AgentLists);
-        return AgentLists;
+        return lga;
       }
     } else {
-      print('failed');
+      print(body);
     }
-  }on TimeoutException catch (e) {
-  List<Agents> defaul = [
-    Agents(fullname: 'network')
-  ];
-   return defaul;
-  } on SocketException catch (e) {
-  List<Agents> defaul = [
-    Agents(fullname: 'network')
-  ];
-  print('Socket Error: $e');
-  return defaul;
-  } on Error catch (e) {
-  List<Agents> defaul = [
-    Agents(fullname: 'network')
-  ];
-  print('General Error: $e');
-  return defaul;
   }
-}}
 
+  Future getAgents(lan, log) async {
+    try {
+      var response = await http.get(
+          Uri.parse(
+              'https://frankediku.pythonanywhere.com/vendorsapi/getvendordistance/$lan/$log/'),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Token $token',
+          }).timeout(Duration(seconds: 20));
+      var body = json.decode(response.body);
+      print(body);
+      print(body);
+      List body1 = body['message'];
+      List<Agents> AgentLists = body1.map((data) {
+        return Agents.fromJson(data);
+      }).toList();
 
-class NetworkError{
+      notifyListeners();
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 202) {
+        if (AgentLists.isEmpty) {
+          List<Agents> defaul = [];
+          return defaul;
+        } else {
+          print(AgentLists);
+          return AgentLists;
+        }
+      } else {
+        print('failed');
+      }
+    } on TimeoutException catch (e) {
+      List<Agents> defaul = [Agents(fullname: 'network')];
+      return defaul;
+    } on SocketException catch (e) {
+      List<Agents> defaul = [Agents(fullname: 'network')];
+      print('Socket Error: $e');
+      return defaul;
+    } on Error catch (e) {
+      List<Agents> defaul = [Agents(fullname: 'network')];
+      print('General Error: $e');
+      return defaul;
+    }
+  }
+}
+
+class NetworkError {
   String network;
   NetworkError({required this.network});
 }
